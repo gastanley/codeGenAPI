@@ -13,6 +13,6 @@ class CodeGenSeeder extends Seeder
      */
     public function run(): void
     {
-        CodeGenModel::factory(10)->create();
+        CodeGenModel::factory(10)->create();    
     }
 }

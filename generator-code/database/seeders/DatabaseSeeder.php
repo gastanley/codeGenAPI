@@ -18,5 +18,7 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call([CodeGenSeeder::class]);
+        $data = CodeGenModel::where('user_id', $user->id)->get();
+        $this->call([UserSeeder::class]);
     }   
 }

@@ -169,7 +169,7 @@
         // Fonction pour récupérer et afficher les données existantes (nomSite et codeGenerator)
         async function fetchExistingData() {
             try {
-                const response = await fetch('/api/codeGen/relations');
+                const response = await fetch('/api/codeGen');
                 const data = await response.json();
 
                 const dataTable = document.getElementById('data-table');

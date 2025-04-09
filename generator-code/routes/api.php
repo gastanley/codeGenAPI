@@ -25,15 +25,17 @@ Route::get('/codeGen/relations',[CodeGenController::class,'getcodeGen']);
 // auth routes
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'authenticate'])->name('login.authenticate');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/formulaire', [FormulaireController::class, 'index'])->name('formulaire.index');
-});
 
 // Route pour créer un utilisateur
-Route::post('/users', [UserController::class, 'store']);
+
+Route::post('/users', [UserController::class, 'store']); // Ajouter un utilisateur
+Route::post('/login', [UserController::class, 'login']); // Authentification et génération de token
+
+// Routes protégées
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/logout', [UserController::class, 'logout']); // Déconnexion
+    Route::get('/protected', [UserController::class, 'protectedRoute']); // Exemple de route protégée
+});
 
 // pages routes (resources/views)
 

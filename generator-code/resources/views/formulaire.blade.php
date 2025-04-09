@@ -73,15 +73,6 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* Style pour le slogan */
-        .slogan {
-            font-size: 1.2rem;
-            text-align: center;
-            color: #ccc;
-            font-style: italic;
-            margin-bottom: 2rem;
-        }
-
         /* Style des champs de formulaire */
         .form-control {
             background-color: #1f1f23;
@@ -199,9 +190,6 @@
     <div class="container mt-5">
         <!-- En-tête du formulaire -->
         <div class="header-title">Complexe CodeGenerator</div>
-
-        <!-- Slogan -->
-        <div class="slogan">Helpful website to remember all passwords you use!</div>
 
         <!-- Vérifie les messages de succès -->
         @if (session('success'))

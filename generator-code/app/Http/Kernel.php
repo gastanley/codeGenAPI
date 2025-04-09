@@ -39,8 +39,9 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
+            // Middleware spécifique pour Sanctum
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            'throttle:api', // Ajout de limitation pour les API
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCodeGenRequest;
-use App\Http\Resources\CodeGenCollection;
+use App\Http\Resources\codeGenCollection;
 use App\Http\Resources\CodeGenResource;
 use App\Models\codeGenModel;
 
@@ -15,7 +15,7 @@ class CodeGenController extends Controller
      */
     public function index()
     {
-        return new CodeGenCollection(CodeGenModel::all());
+        return new codeGenCollection(CodeGenModel::all());
     }
 
     /**

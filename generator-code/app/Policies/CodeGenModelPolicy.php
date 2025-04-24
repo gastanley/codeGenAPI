@@ -1,25 +1,19 @@
 <?php
 
-namespace App\Policies;
+namespace App\Providers;
 
 use App\Models\CodeGenModel;
-use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Policies\CodeGenModelPolicy;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
-class CodeGenModelPolicy
+class AuthServiceProvider extends ServiceProvider
 {
-    public function view(User $user, CodeGenModel $codeGen)
-    {
-        return $user->id === $codeGen->user_id;
-    }
+    protected $policies = [
+        CodeGenModel::class => CodeGenModelPolicy::class,
+    ];
 
-    public function update(User $user, CodeGenModel $codeGen)
+    public function boot()
     {
-        return $user->id === $codeGen->user_id;
-    }
-
-    public function delete(User $user, CodeGenModel $codeGen)
-    {
-        return $user->id === $codeGen->user_id;
+        $this->registerPolicies();
     }
 }

@@ -35,11 +35,10 @@ class CodeGenController extends Controller
 
     public function getcodeGen()
     {
-        $codeGenerator=CodeGenModel::latest()->get();
-        $nomSite=CodeGenModel::latest()->get();
+        $codeGens = Auth::user()->codeGenModels()->latest()->get();
         return response([
-            'nomSite'=>$nomSite,
-            'codeGenerator'=>$codeGenerator
+            'nomSite' => $codeGens->pluck('nomSite'),
+            'codeGenerator' => $codeGens->pluck('codeGenerator'),
         ]);
     }
 

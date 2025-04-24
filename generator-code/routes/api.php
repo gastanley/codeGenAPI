@@ -35,6 +35,10 @@ Route::post('/login', [UserController::class, 'login']); // Authentification et 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [UserController::class, 'logout']); // Déconnexion
     Route::get('/protected', [UserController::class, 'protectedRoute']); // Exemple de route protégée
+    Route::get('/codegens', [CodeGenController::class, 'index'])->name('codegens.index');
+    Route::post('/codegens', [CodeGenController::class, 'store'])->name('codegens.store');
+    Route::get('/codegens/{codeGen}', [CodeGenController::class, 'show'])->name('codegens.show');
+    Route::get('/getcodegen', [CodeGenController::class, 'getcodeGen'])->name('getcodegen');
 });
 
 // pages routes (resources/views)

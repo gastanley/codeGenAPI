@@ -138,6 +138,20 @@
             text-align: center;
         }
 
+        /* Style pour les options de mot de passe */
+        .password-options {
+            margin-bottom: 1rem;
+        }
+
+        .password-option {
+            margin-right: 1rem;
+            cursor: pointer;
+        }
+
+        .password-option input {
+            margin-right: 0.5rem;
+        }
+
     </style>
     <script>
         // Fonction pour générer un mot de passe complexe
@@ -151,9 +165,25 @@
             return password;
         }
 
-        // Fonction pour remplir le champ de mot de passe généré
-        function fillGeneratedPassword() {
-            const passwordField = document.getElementById('generated_password');
+        // Fonction pour gérer le choix du mot de passe
+        function handlePasswordChoice(choice) {
+            const passwordField = document.getElementById('codeGenerator');
+            const generateButton = document.getElementById('generate-btn');
+            
+            if (choice === 'generate') {
+                passwordField.value = generatePassword(12);
+                passwordField.readOnly = true;
+                generateButton.style.display = 'inline-block';
+            } else {
+                passwordField.value = '';
+                passwordField.readOnly = false;
+                generateButton.style.display = 'none';
+            }
+        }
+
+        // Fonction pour générer un nouveau mot de passe
+        function generateNewPassword() {
+            const passwordField = document.getElementById('codeGenerator');
             passwordField.value = generatePassword(12);
         }
 
@@ -183,7 +213,12 @@
         }
 
         // Charger les données dès que la page est prête
-        document.addEventListener('DOMContentLoaded', fetchExistingData);
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchExistingData();
+            // Par défaut, activer l'option de génération automatique
+            document.getElementById('generate-option').checked = true;
+            handlePasswordChoice('generate');
+        });
     </script>
 </head>
 <body>
@@ -213,12 +248,24 @@
                 @enderror
             </div>
 
-            <!-- Champ pour le mot de passe généré -->
+            <!-- Options pour le mot de passe -->
+            <div class="password-options">
+                <label class="password-option">
+                    <input type="radio" name="password_choice" id="generate-option" value="generate" onclick="handlePasswordChoice('generate')" checked>
+                    Générer automatiquement un mot de passe
+                </label>
+                <label class="password-option">
+                    <input type="radio" name="password_choice" id="manual-option" value="manual" onclick="handlePasswordChoice('manual')">
+                    Entrer manuellement un mot de passe
+                </label>
+            </div>
+
+            <!-- Champ pour le mot de passe -->
             <div class="mb-3">
-                <label for="generated_password" class="form-label">Mot de passe généré</label>
+                <label for="codeGenerator" class="form-label">Mot de passe</label>
                 <div class="input-group">
-                    <input type="text" name="codeGenerator" id="generated_password" class="form-control @error('codeGenerator') is-invalid @enderror" readonly>
-                    <button type="button" class="btn btn-secondary" onclick="fillGeneratedPassword()">Générer</button>
+                    <input type="text" name="codeGenerator" id="codeGenerator" class="form-control @error('codeGenerator') is-invalid @enderror" required>
+                    <button type="button" class="btn btn-secondary" id="generate-btn" onclick="generateNewPassword()">Générer</button>
                 </div>
                 @error('codeGenerator')
                     <div class="invalid-feedback">

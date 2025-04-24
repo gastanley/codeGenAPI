@@ -52,7 +52,9 @@ class CodeGenController extends Controller
         //     'codeGenerator' => $request->codeGenerator,
         // ]);
         $validatedData = $request->validated();
-        CodeGenModel::create([
+
+        $codeGen = Auth::user()->codeGenModels();
+        $codeGen::create([
             'nomSite'=>$validatedData['nomSite'],
             'codeGenerator'=>$validatedData['codeGenerator'],
             'user_id' => Auth::id()

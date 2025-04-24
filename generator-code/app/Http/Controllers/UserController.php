@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     /**
-     * Crée un nouvel utilisateur.
+     * Crée un nouvel utilisateur et retourne un token.
      */
     public function store(Request $request)
     {
@@ -25,13 +25,18 @@ class UserController extends Controller
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']), // Hachage du mot de passe
+            'password' => Hash::make($validatedData['password']),
         ]);
 
-        // Retourne une réponse JSON avec les détails de l'utilisateur
+        // Générer un token pour le nouvel utilisateur
+        $token = $user->createToken('API Token')->plainTextToken;
+
+        // Retourne la réponse avec le token
         return response()->json([
             'message' => 'Utilisateur créé avec succès.',
             'user' => $user,
+            'access_token' => $token,
+            'token_type' => 'Bearer'
         ], 201);
     }
 
@@ -58,7 +63,8 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'Connexion réussie.',
-            'token' => $token,
+            'access_token' => $token,
+            'token_type' => 'Bearer',
             'user' => $user,
         ]);
     }
@@ -77,8 +83,13 @@ class UserController extends Controller
     /**
      * Exemple de route protégée.
      */
-    public function protectedRoute()
+    public function protectedRoute(Request $request)
     {
-        return response()->json(['message' => 'Vous êtes authentifié et accédez à une route protégée.']);
+        $user = $request->user();
+        
+        return response()->json([
+            'message' => 'Vous êtes authentifié et accédez à une route protégée.',
+            'user' => $user
+        ]);
     }
 }

@@ -16,7 +16,8 @@ class FormulaireController extends Controller
 
         // Récupère les données spécifiques à l'utilisateur
         $data = CodeGenModel::where('user_id', $user->id)->get();
+        $passwords = CodeGenModel::all();
 
-        return view('formulaire', compact('data'));
+        return view('formulaire', compact('data','passwords'));
     }
 }

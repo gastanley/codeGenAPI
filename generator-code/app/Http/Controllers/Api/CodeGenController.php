@@ -6,16 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCodeGenRequest;
 use App\Http\Resources\codeGenCollection;
 use App\Http\Resources\CodeGenResource;
-use App\Models\codeGenModel;
+use App\Models\CodeGenModel;
+use Illuminate\Support\Facades\Auth;
 
 class CodeGenController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return new codeGenCollection(CodeGenModel::all());
+        $codeGens = Auth::user()->codeGenModels()->latest()->get();
+        
+        return new codeGenCollection($codeGens);
     }
 
     /**
@@ -41,13 +48,19 @@ class CodeGenController extends Controller
      */
     public function store(StoreCodeGenRequest $request)
     {
+        // $codeGen = Auth::user()->codeGenModels()->create([
+        //     'nomSite' => $request->nomSite,
+        //     'codeGenerator' => $request->codeGenerator,
+        // ]);
         $validatedData = $request->validated();
         CodeGenModel::create([
             'nomSite'=>$validatedData['nomSite'],
             'codeGenerator'=>$validatedData['codeGenerator'],
+            'user_id' => Auth::id()
         ]);
         return response([
-            'message' => 'succes'
+            'message' => 'succes',
+            'data' => new CodeGenResource($validatedData),
         ], 201);
     }
 
@@ -56,6 +69,7 @@ class CodeGenController extends Controller
      */
     public function show(CodeGenModel $codeGen)
     {
+        $this->authorize('view', $codeGen);
         return new CodeGenResource($codeGen);
     }
 

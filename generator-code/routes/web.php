@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FormulaireController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,4 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/users', [UserController::class, 'store']);
 
 // Exemple de route après connexion réussie (à personnaliser)
-Route::get('/formulaire', function () {
-    return view('formulaire');
-})->name('formulaire.index')->middleware('auth');
+Route::get('/formulaire', [FormulaireController::class, 'index'])->name('formulaire.index')->middleware('auth');

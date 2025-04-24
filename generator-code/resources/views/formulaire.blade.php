@@ -46,6 +46,22 @@
             background-color: #5a0cae;
         }
 
+        .logout-btn {
+            background-color: #1d4ed8;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 5px;
+            float: right;
+        }
+
+        .logout-btn:hover {
+            background-color: #6a0dad;
+        }
+
         /* Style pour Complexe CodeGenerator */
         .header-title {
             font-size: 3rem;
@@ -223,77 +239,139 @@
 </head>
 <body>
     <div class="container mt-5">
-        <!-- En-tête du formulaire -->
-        <div class="header-title">Complexe CodeGenerator</div>
-
-        <!-- Vérifie les messages de succès -->
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+        <!-- Bouton de déconnexion -->
+        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+            @csrf
+            <button type="submit" class="logout-btn">Déconnexion</button>
+        </form>
+        
+        <!-- Titre principal -->
+        <h1 class="header-title">Code Generator</h1>
 
         <!-- Formulaire -->
-        <form action="/api/codegen/store" method="POST">
-            @csrf
-
-            <!-- Champ pour le nom du site -->
-            <div class="mb-3">
-                <label for="site_name" class="form-label">Nom du site</label>
-                <input type="text" name="nomSite" id="site_name" class="form-control @error('nomSite') is-invalid @enderror" required>
-                @error('nomSite')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
+<form id="passwordForm" action="/api/codegen/store" method="POST">
+    @csrf
+    <!-- Champ pour le nom du site -->
+    <div class="mb-3">
+        <label for="site_name" class="form-label">Nom du site</label>
+        <input type="text" name="nomSite" id="site_name" class="form-control @error('nomSite') is-invalid @enderror" required>
+        @error('nomSite')
+            <div class="invalid-feedback">
+                {{ $message }}
             </div>
+        @enderror
+    </div>
 
-            <!-- Options pour le mot de passe -->
-            <div class="password-options">
-                <label class="password-option">
-                    <input type="radio" name="password_choice" id="generate-option" value="generate" onclick="handlePasswordChoice('generate')" checked>
-                    Générer automatiquement un mot de passe
-                </label>
-                <label class="password-option">
-                    <input type="radio" name="password_choice" id="manual-option" value="manual" onclick="handlePasswordChoice('manual')">
-                    Entrer manuellement un mot de passe
-                </label>
-            </div>
+    <!-- Options pour le mot de passe -->
+    <div class="password-options">
+        <label class="password-option">
+            <input type="radio" name="password_choice" id="generate-option" value="generate" onclick="handlePasswordChoice('generate')" checked>
+            Générer automatiquement un mot de passe
+        </label>
+        <label class="password-option">
+            <input type="radio" name="password_choice" id="manual-option" value="manual" onclick="handlePasswordChoice('manual')">
+            Entrer manuellement un mot de passe
+        </label>
+    </div>
 
-            <!-- Champ pour le mot de passe -->
-            <div class="mb-3">
-                <label for="codeGenerator" class="form-label">Mot de passe</label>
-                <div class="input-group">
-                    <input type="text" name="codeGenerator" id="codeGenerator" class="form-control @error('codeGenerator') is-invalid @enderror" required>
-                    <button type="button" class="btn btn-secondary" id="generate-btn" onclick="generateNewPassword()">Générer</button>
-                </div>
-                @error('codeGenerator')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
-            </div>
-
-            <!-- Bouton pour soumettre -->
-            <button type="submit" class="btn btn-primary">Soumettre</button>
-        </form>
-
-        <!-- Tableau des données existantes -->
-        <div class="mt-5">
-            <h2 class="listeDonnée">Liste des données existantes</h2>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nom du site</th>
-                        <th>Code généré</th>
-                    </tr>
-                </thead>
-                <tbody id="data-table">
-                    <!-- Les données seront insérées ici via JavaScript -->
-                </tbody>
-            </table>
+    <!-- Champ pour le mot de passe -->
+    <div class="mb-3">
+        <label for="codeGenerator" class="form-label">Mot de passe</label>
+        <div class="input-group">
+            <input type="text" name="codeGenerator" id="codeGenerator" class="form-control @error('codeGenerator') is-invalid @enderror" required>
+            <button type="button" class="btn btn-secondary" id="generate-btn" onclick="generateNewPassword()">Générer</button>
         </div>
+        @error('codeGenerator')
+            <div class="invalid-feedback">
+                {{ $message }}
+            </div>
+        @enderror
+    </div>
+
+    <!-- Bouton pour soumettre -->
+    <button type="submit" class="btn btn-primary">Soumettre</button>
+</form>
+
+<!-- Tableau des données existantes -->
+<div class="mt-5">
+    <h2 class="listeDonnée">Liste des données existantes</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nom du site</th>
+                <th>Code généré</th>
+            </tr>
+        </thead>
+        <tbody id="data-table">
+            @foreach($passwords as $index => $password)
+            <tr>
+                <td>{{ $index + 1 }}</td>
+                <td>{{ $password->nomSite }}</td>
+                <td>{{ $password->codeGenerator }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const response = await fetch(this.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: formData
+    });
+
+    if (response.ok) {
+        // Solution Blade : rechargement partiel
+        await fetchAndUpdateTable();
+        
+        // Affiche le message (utilisation de la session Blade)
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success';
+        alertDiv.textContent = 'Ajout réussi !';
+        document.querySelector('.container').prepend(alertDiv);
+        
+        // Cache l'alerte après 5s
+        setTimeout(() => alertDiv.remove(), 5000);
+        
+        // Réinitialise le formulaire
+        this.reset();
+        handlePasswordChoice('generate');
+    }
+});
+
+async function fetchAndUpdateTable() {
+    try {
+        const response = await fetch('/api/codeGen');
+        const data = await response.json();
+
+        const dataTable = document.getElementById('data-table');
+        dataTable.innerHTML = ''; // Réinitialiser le tableau
+
+        // Ajouter les données reçues dans le tableau
+        data.forEach((item, index) => {
+            const row = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.nomSite}</td>
+                    <td>${item.codeGenerator}</td>
+                </tr>
+            `;
+            dataTable.innerHTML += row;
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données:', error);
+    }
+}
+</script>
     </div>
 </body>
 </html>
